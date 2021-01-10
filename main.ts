@@ -79,7 +79,7 @@ function GetTimeString() : string {
     if (hour < 10) {
         timeText = timeText + "0"
     }
-    timeText = timeText + hour.toString() + "."
+    timeText = timeText + hour.toString() + ","
     if (minute < 10) {
         timeText = timeText + "0"
     }
@@ -88,22 +88,23 @@ function GetTimeString() : string {
 }
 
 function updateTime() {
-    let totalSeconds = Math.round((input.runningTime() - lastUpdated) / 1000)
+    let totalSeconds = Math.floor((input.runningTime() - lastUpdated) / 1000)
 
     // update clock every 15 minutes
     if (totalSeconds > 15*60) {
         getTime()
     }
 
-    totalSeconds += offsetHours * 3600
-    totalSeconds += offsetMinutes * 60
+    totalSeconds = totalSeconds + (offsetHours * 3600)
+    totalSeconds = totalSeconds + (offsetMinutes * 60)
+
     if (totalSeconds >= 3600) {
-        hour = Math.round(totalSeconds / 3600)
-        totalSeconds = Math.round(totalSeconds - hour * 3600)
+        hour = Math.floor(totalSeconds / 3600)
+        totalSeconds = Math.floor(totalSeconds - (hour * 3600))
     }
     if (totalSeconds >= 60) {
-        minute = Math.round(totalSeconds / 60)
-        totalSeconds = Math.round(totalSeconds - minute * 60)
+        minute = Math.floor(totalSeconds / 60)
+        totalSeconds = Math.floor(totalSeconds - (minute * 60))
     }
     second = totalSeconds
     if (second < 0) {
@@ -111,8 +112,15 @@ function updateTime() {
     }   
 }
 
+let currentSegText = ""
+let newSegText = ""
+
 basic.forever(function () {
     updateTime()    
-    sevenSegment.writeString(GetTimeString())
-    basic.pause(500)
+    newSegText = GetTimeString()
+    if (newSegText != currentSegText) {
+        currentSegText = newSegText;
+        sevenSegment.writeString(currentSegText)
+    }
+    basic.pause(5000)
 })
