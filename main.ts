@@ -9,8 +9,8 @@ let month:number=1
 let day:number=1
 let lastUpdated = 0
 radio.setGroup(17)
-getTime()
 sevenSegment.startSevenSegPin0()
+getTime()
 
 // offsetHours = 7
 // offsetMinutes = 10
@@ -48,15 +48,26 @@ input.onButtonPressed(Button.AB, function () {
     getTime()
 })
 
+function getTemperature() : number
+{
+    let temp = input.temperature()
+
+    // Adjust to known values.
+    // 31 => 26
+    temp = temp - 8
+
+    return temp
+}
+
 input.onButtonPressed(Button.B, function () {
-
-    let totalSeconds = Math.round((input.runningTime() - lastUpdated) / 1000)
-
-    basic.showString("H:" + offsetHours.toString() + " M:" + offsetMinutes.toString() + " S:" + totalSeconds.toString())
-    //basic.showString(GetDateString() + "  ")
+    sevenSegment.writeNumber(getTemperature())
+    basic.pause(3000)
+    sevenSegment.writeString(currentSegText)
 })
 
 function getTime() {
+    currentSegText = "LOAD";
+    sevenSegment.writeString(currentSegText)
     radio.sendString("gettime")
 }
 
@@ -115,6 +126,7 @@ function updateTime() {
 let currentSegText = ""
 let newSegText = ""
 
+
 basic.forever(function () {
     updateTime()    
     newSegText = GetTimeString()
@@ -123,4 +135,7 @@ basic.forever(function () {
         sevenSegment.writeString(currentSegText)
     }
     basic.pause(5000)
+    if (lastUpdated == 0){
+        getTime()
+    }
 })
