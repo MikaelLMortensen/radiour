@@ -18,23 +18,29 @@ getTime()
 radio.onReceivedValue(function (name: string, value: number) {
 
     switch(name) {
+        case "hhmmss":
+            offsetHours = Math.floor(value / 10000);
+            value = value - offsetHours * 10000
+            offsetMinutes = Math.floor(value / 100);
+            second = value - offsetMinutes * 100;        
+        break;
         case "hour":
-        offsetHours = value
+            offsetHours = value
         break;
         case "minute":
-        offsetMinutes = value
+            offsetMinutes = value
         break;
         case "second":
-        second = value
+            second = value
         break;
         case "year":
-        year = value
+            year = value
         break;
         case "month":
-        month = value
+            month = value
         break;
         case "day":
-        day = value
+            day = value
         break;
     }
     lastUpdated = input.runningTime()
@@ -68,7 +74,7 @@ input.onButtonPressed(Button.B, function () {
 function getTime() {
     currentSegText = "LOAD";
     sevenSegment.writeString(currentSegText)
-    radio.sendString("gettime")
+    radio.sendString("gettime2")
 }
 
 function GetDateString() : string {
